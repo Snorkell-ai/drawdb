@@ -1,6 +1,12 @@
 import { sqlDataTypes } from "../data/constants";
 import { isFunction, isKeyword, strHasQuotes } from "./utils";
 
+/**
+ * Returns the JSON type of the given field.
+ * @param {Object} f - The field object.
+ * @returns {string} - The JSON type representation of the field.
+ * @throws {Error} - If the field type is not recognized.
+ */
 export function getJsonType(f) {
   if (!sqlDataTypes.includes(f.type)) {
     return '{ "type" : "object", additionalProperties : true }';
@@ -31,6 +37,12 @@ export function getJsonType(f) {
   }
 }
 
+/**
+ * Generates a JSON schema based on the provided type.
+ * @param {string} type - The type for which the schema needs to be generated.
+ * @throws {Error} Will throw an error if the type is not provided.
+ * @returns {string} Returns the generated JSON schema as a string.
+ */
 export function generateSchema(type) {
   return `{\n\t\t\t"$schema": "http://json-schema.org/draft-04/schema#",\n\t\t\t"type": "object",\n\t\t\t"properties": {\n\t\t\t\t${type.fields
     .map((f) => `"${f.name}" : ${getJsonType(f)}`)
@@ -39,6 +51,14 @@ export function generateSchema(type) {
     )}\n\t\t\t},\n\t\t\t"additionalProperties": false\n\t\t}`;
 }
 
+/**
+ * Returns the SQL data type string for the given field based on the specified DBMS and baseType.
+ * @param {Object} field - The field object containing type and other properties.
+ * @param {string} dbms - The database management system (DBMS) for which to generate the type string.
+ * @param {boolean} [baseType=false] - Whether to return the base type string.
+ * @returns {string} - The SQL data type string for the given field.
+ * @throws {Error} - Throws an error if the field type is not recognized or supported.
+ */
 export function getTypeString(field, dbms = "mysql", baseType = false) {
   if (dbms === "mysql") {
     if (field.type === "UUID") {
@@ -129,6 +149,12 @@ export function getTypeString(field, dbms = "mysql", baseType = false) {
   }
 }
 
+/**
+ * Check if the given type has quotes.
+ * @param {string} type - The type to check for quotes.
+ * @throws {Error} Will throw an error if the type is not a valid string.
+ * @returns {boolean} Returns true if the type has quotes, false otherwise.
+ */
 export function hasQuotes(type) {
   return [
     "CHAR",
@@ -143,6 +169,12 @@ export function hasQuotes(type) {
   ].includes(type);
 }
 
+/**
+ * Parses the default value for a field.
+ * @param {any} field - The field to parse the default value for.
+ * @throws {Error} Throws an error if the default value is not valid.
+ * @returns {any} The parsed default value for the field.
+ */
 export function parseDefault(field) {
   if (
     strHasQuotes(field.default) ||
@@ -156,6 +188,12 @@ export function parseDefault(field) {
   return `'${field.default}'`;
 }
 
+/**
+ * Converts a JSON object to MySQL table creation SQL statements.
+ * @param {Object} obj - The JSON object containing table, field, and reference information.
+ * @returns {string} - The MySQL table creation SQL statements.
+ * @throws {Error} - Throws an error if the input object is not valid or if there is an issue with the conversion process.
+ */
 export function jsonToMySQL(obj) {
   return `${obj.tables
     .map(
@@ -217,6 +255,12 @@ export function jsonToMySQL(obj) {
     .join("\n")}`;
 }
 
+/**
+ * Converts a JSON object to PostgreSQL schema.
+ * @param {Object} obj - The input JSON object containing types, tables, and references.
+ * @returns {string} - The PostgreSQL schema generated from the input JSON object.
+ * @throws {Error} - Throws an error if there is an issue with the input JSON object.
+ */
 export function jsonToPostgreSQL(obj) {
   return `${obj.types.map((type) => {
     const typeStatements = type.fields
@@ -305,6 +349,12 @@ export function jsonToPostgreSQL(obj) {
     .join("\n")}`;
 }
 
+/**
+ * Returns the SQLite type based on the field type.
+ * @param {Object} field - The field object containing the type.
+ * @returns {string} - The SQLite type for the given field type.
+ * @throws {Error} - If the field type is not recognized.
+ */
 export function getSQLiteType(field) {
   switch (field.type) {
     case "INT":
@@ -338,6 +388,13 @@ export function getSQLiteType(field) {
   }
 }
 
+/**
+ * Returns the inline foreign key constraint for the specified table and object.
+ * @param {Object} table - The table object for which the inline foreign key is to be retrieved.
+ * @param {Object} obj - The object containing references and tables information.
+ * @throws {Error} If the specified table or object is invalid.
+ * @returns {string} The inline foreign key constraint for the specified table and object.
+ */
 export function getInlineFK(table, obj) {
   let fk = "";
   obj.references.forEach((r) => {
@@ -353,6 +410,12 @@ export function getInlineFK(table, obj) {
   return fk;
 }
 
+/**
+ * Converts a JSON object to SQLite table creation statements.
+ * @param {Object} obj - The JSON object containing table and field information.
+ * @returns {string} - The SQLite table creation statements.
+ * @throws {Error} - Throws an error if there is a problem converting the JSON to SQLite.
+ */
 export function jsonToSQLite(obj) {
   return obj.tables
     .map((table) => {
@@ -397,6 +460,12 @@ export function jsonToSQLite(obj) {
     .join("\n");
 }
 
+/**
+ * Converts a JSON object to MariaDB SQL statements for creating tables and adding foreign key constraints.
+ * @param {Object} obj - The JSON object containing tables, fields, indices, and references.
+ * @returns {string} - The generated SQL statements for creating tables and adding foreign key constraints.
+ * @throws {Error} - Throws an error if any of the required parameters are missing or invalid.
+ */
 export function jsonToMariaDB(obj) {
   return `${obj.tables
     .map(
@@ -458,6 +527,12 @@ export function jsonToMariaDB(obj) {
     .join("\n")}`;
 }
 
+/**
+ * Converts a JSON object to SQL Server schema creation script.
+ * @param {Object} obj - The JSON object containing types, tables, and references.
+ * @returns {string} - The SQL Server schema creation script.
+ * @throws {Error} - Throws an error if there is an issue with the conversion process.
+ */
 export function jsonToSQLServer(obj) {
   return `${obj.types
     .map((type) => {
@@ -523,14 +598,32 @@ export function jsonToSQLServer(obj) {
     .join("\n")}`;
 }
 
+/**
+ * Check if the given type is a sized type.
+ * @param {string} type - The type to be checked.
+ * @returns {boolean} - Returns true if the type is a sized type, otherwise false.
+ * @throws {Error} - Throws an error if the type is not a valid sized type.
+ */
 export function isSized(type) {
   return ["CHAR", "VARCHAR", "BINARY", "VARBINARY", "TEXT"].includes(type);
 }
 
+/**
+ * Check if the given type has precision.
+ * @param {string} type - The type to check for precision.
+ * @returns {boolean} - True if the type has precision, false otherwise.
+ * @throws {Error} - If the type is not a valid input.
+ */
 export function hasPrecision(type) {
   return ["DOUBLE", "NUMERIC", "DECIMAL", "FLOAT"].includes(type);
 }
 
+/**
+ * Check if the given type is included in a list of supported types.
+ * @param {string} type - The type to check.
+ * @returns {boolean} - True if the type is included, false otherwise.
+ * @throws {Error} - If the type parameter is not provided.
+ */
 export function hasCheck(type) {
   return [
     "INT",
@@ -546,6 +639,12 @@ export function hasCheck(type) {
   ].includes(type);
 }
 
+/**
+ * Returns the size of the specified data type.
+ * @param {string} type - The data type for which to get the size.
+ * @returns {number|string} - The size of the data type. Returns a number for known data types, and an empty string for unknown data types.
+ * @throws {Error} - If the specified type is not recognized.
+ */
 export function getSize(type) {
   switch (type) {
     case "CHAR":

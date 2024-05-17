@@ -1,5 +1,13 @@
 import { tableFieldHeight, tableHeaderHeight } from "../data/constants";
 
+/**
+ * Calculates the path for a given relationship between tables
+ * @param {Object} r - The relationship object containing startTable, endTable, startFieldId, and endFieldId
+ * @param {number} tableWidth - The width of the table (default value is 200)
+ * @param {number} zoom - The zoom factor (default value is 1)
+ * @returns {string} - The calculated path as an SVG path string
+ * @throws {Error} - Throws an error if the calculation fails
+ */
 export function calcPath(r, tableWidth = 200, zoom = 1) {
   const width = tableWidth * zoom;
   let x1 = r.startTable.x;

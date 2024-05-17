@@ -1,12 +1,25 @@
 import i18n from "../i18n/i18n";
 import { isFunction, strHasQuotes } from "./utils";
 
+/**
+ * Validates a date string.
+ * 
+ * @param {string} str - The date string to be validated.
+ * @returns {boolean} - Returns true if the date string is valid, otherwise false.
+ * @throws {SyntaxError} - Throws a SyntaxError if the input is not a valid date string.
+ */
 function validateDateStr(str) {
   return /^(?!0000)(?!00)(?:(?!0000)[0-9]{4}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9]|3[01])|(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31))$/.test(
     str,
   );
 }
 
+/**
+ * Check if the field has a default value that is valid based on the field type and constraints.
+ * @param {Object} field - The field object to check for default value validity.
+ * @returns {boolean} - Returns true if the default value is valid, otherwise false.
+ * @throws {Error} - Throws an error if the default value is not valid for the field type.
+ */
 function checkDefault(field) {
   if (field.default === "") return true;
 
@@ -83,6 +96,12 @@ function checkDefault(field) {
   }
 }
 
+/**
+ * Retrieves the list of issues in the provided diagram.
+ * @param {Object} diagram - The diagram object containing tables, types, and relationships.
+ * @returns {Array} - An array of issues found in the diagram.
+ * @throws {Error} - Throws an error if there are circular dependencies in the relationships.
+ */
 export function getIssues(diagram) {
   const issues = [];
   const duplicateTableNames = {};
@@ -253,6 +272,12 @@ export function getIssues(diagram) {
 
   const visitedTables = new Set();
 
+  /**
+   * Checks for circular relationships in the given table.
+   * @param {string} tableId - The ID of the table to check for circular relationships.
+   * @param {Array} visited - An array containing the IDs of the tables that have been visited (default is an empty array).
+   * @throws {Error} Throws an error if there is a circular dependency.
+   */
   function checkCircularRelationships(tableId, visited = []) {
     if (visited.includes(tableId)) {
       issues.push(
