@@ -5,6 +5,12 @@ import {
   tableHeaderHeight,
 } from "../data/constants";
 
+/**
+ * Generates SQL query from Abstract Syntax Tree (AST).
+ * @param {object} ast - The Abstract Syntax Tree object.
+ * @throws {Error} Throws an error if the AST is not valid or if there is an issue in building the SQL query.
+ * @returns {string} Returns the SQL query generated from the AST.
+ */
 function buildSQLFromAST(ast) {
   if (ast.type === "binary_expr") {
     const leftSQL = buildSQLFromAST(ast.left);
@@ -41,6 +47,12 @@ function buildSQLFromAST(ast) {
   }
 }
 
+/**
+ * Converts an abstract syntax tree (AST) to a diagram representation.
+ * @param {Object} ast - The abstract syntax tree to be converted.
+ * @returns {Object} - An object containing tables and relationships for the diagram.
+ * @throws {Error} - Throws an error if the input AST is invalid or cannot be processed.
+ */
 export function astToDiagram(ast) {
   const tables = [];
   const relationships = [];

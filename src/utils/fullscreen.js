@@ -1,3 +1,7 @@
+/**
+ * Enters fullscreen mode for the document element.
+ * @throws {Error} Throws an error if fullscreen mode cannot be entered.
+ */
 export function enterFullscreen() {
   const element = document.documentElement;
   if (element.requestFullscreen) {
@@ -11,6 +15,10 @@ export function enterFullscreen() {
   }
 }
 
+/**
+ * Exits the full screen mode.
+ * @throws {Error} Throws an error if the full screen mode cannot be exited.
+ */
 export function exitFullscreen() {
   if (document.exitFullscreen) {
     document.exitFullscreen();

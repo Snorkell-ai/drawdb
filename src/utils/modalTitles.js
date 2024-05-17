@@ -1,6 +1,12 @@
 import { MODAL } from "../data/constants";
 import i18n from "../i18n/i18n";
 
+/**
+ * Returns the title for the given modal.
+ * @param {string} modal - The modal type.
+ * @returns {string} - The title for the modal.
+ * @throws {Error} - If the modal type is not recognized.
+ */
 export const getModalTitle = (modal) => {
   switch (modal) {
     case MODAL.IMPORT:
@@ -27,6 +33,13 @@ export const getModalTitle = (modal) => {
   }
 };
 
+/**
+ * Returns the text for the given modal.
+ * 
+ * @param {string} modal - The modal type.
+ * @returns {string} - The text for the modal.
+ * @throws {Error} - If the modal type is not recognized.
+ */
 export const getOkText = (modal) => {
   switch (modal) {
     case MODAL.IMPORT:
